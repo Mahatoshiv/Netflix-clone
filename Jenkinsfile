@@ -15,7 +15,7 @@ pipeline{
         }
         stage('Checkout from Git'){
             steps{
-                git branch: 'master', url: 'https://github.com/AmanPathak-DevOps/Netflix-Clone-K8S-End-to-End-Project.git'
+                git 'https://github.com/Mahatoshiv/Netflix-clone.git'
             }
         }
         stage("Sonarqube Analysis"){
@@ -56,7 +56,7 @@ pipeline{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
                        sh "docker system prune -f"
                        sh "docker container prune -f"
-                       sh "docker build --build-arg TMDB_V3_API_KEY=8b174e589e2f03f9fd8123907bd7800c -t netflix ."
+                       sh "docker build --build-arg TMDB_V3_API_KEY=05ef741dcc82454669889e3f82d5d8b9 -t netflix ."
                     }
                 }
             }
@@ -65,32 +65,15 @@ pipeline{
             steps{
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
-                       sh "docker tag netflix avian19/netflix:latest "
-                       sh "docker push avian19/netflix:latest "
+                       sh "docker tag netflix shiva25021996/netflix:latest "
+                       sh "docker push shiva25021996/netflix:latest "
                     }
                 }
             }
         }
         stage("TRIVY Image Scan"){
             steps{
-                sh "trivy image avian19/netflix:latest > trivyimage.txt" 
-            }
-        }
-        stage('Deploy to Kubernetes'){
-            steps{
-                script{
-                    dir('Kubernetes') {
-                        withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
-                                sh 'kubectl apply -f deployment.yml'
-                                sh 'kubectl apply -f service.yml'
-                                sh 'kubectl get svc'
-                                sh 'kubectl get all'
-                        }   
-                    }
-                }
-            }
-        }
-    }
+                sh "trivy image shiva25021996/netflix:latest > trivyimag
     post {
      always {
         emailext attachLog: true,
